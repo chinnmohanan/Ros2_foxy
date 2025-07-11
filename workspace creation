@@ -23,9 +23,24 @@ Step-by-Step Instructions
 Step 1: Source ROS 2 Foxy
 
 Before running ROS 2 commands, source the ROS 2 environment:
+In the new terminal, source your main ROS 2 environment as the “underlay”, so you can build the overlay “on top of” it:
+            
+            source /opt/ros/foxy/setup.bash
 
-source /opt/ros/foxy/setup.bash
+
 
 Step 2: Create the Workspace
 
-Create the ROS 2 workspace and its src folder:
+Create the ROS 2 workspace and its src folder: (On same terminal, enter following commands)
+
+            mkdir -p ~/ros2_ws/src
+            
+
+From the root of your workspace ros2_ws, you can now build your packages using the command:
+           
+            cd ~/ros2_ws
+            colcon build
+
+In the root, source your overlay:
+            source install/local_setup.bash
+
