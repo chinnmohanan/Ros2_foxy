@@ -1,0 +1,11 @@
+Write the subscriber node
+Return to ros2_ws/src/cpp_pubsub/src to create the next node. Enter the following code in your terminal:
+
+      touch subscriber_member_function.cpp
+
+Entering ls in the console will now return:
+
+publisher_member_function.cpp  subscriber_member_function.cpp
+
+Open the subscriber_member_function.cpp with your text editor.
+Paste the contents of subscriber_member_function.cpp in the repository.
