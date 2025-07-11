@@ -1,0 +1,9 @@
+In the new terminal, source your main ROS 2 environment as the “underlay”, so you can build the overlay “on top of” it:
+            source /opt/ros/foxy/setup.bash
+Go into the root of your workspace:
+            cd ~/ros2_ws
+In the root, source your overlay:
+            source install/local_setup.bash
+
+From the root of your workspace ros2_ws, you can now build your packages using the command:
+            colcon build
