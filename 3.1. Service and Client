@@ -55,8 +55,10 @@ Inside the ros2_ws/src/cpp_srvcli/src directory, create a new file called add_tw
 
 
 
-Add executable
-Return to CMakeLists.txt to add the executable and target for the new node. After removing some unnecessary boilerplate from the automatically generated file, your CMakeLists.txt should look like this:
+Add executable
+Return to CMakeLists.txt to add the executable and target for the new node. 
+After removing some unnecessary boilerplate from the automatically generated file, your CMakeLists.txt should look like this:
+
 cmake_minimum_required(VERSION 3.5)
 project(cpp_srvcli)
 
@@ -76,25 +78,42 @@ install(TARGETS
   DESTINATION lib/${PROJECT_NAME})
 
 ament_package()
-Build and run
+
+
+
+
+Build and run
 Navigate back to the root of your workspace, ros2_ws, and build your new package: 
 colcon build --packages-select cpp_srvcli
 
 
 
 Result
+
 Open a new terminal, navigate to ros2_ws, and source the setup files:
+
 source install/setup.bash
+
 Now run the service node:
+
 ros2 run cpp_srvcli server
+
 The terminal should return the following message, and then wait:
 [INFO] [rclcpp]: Ready to add two ints.
+
 Open another terminal, source the setup files from inside ros2_ws again. Start the client node, followed by any two integers separated by a space:
 ros2 run cpp_srvcli client 2 3
+
 If you chose 2 and 3, for example, the client would receive a response like this:
+
 [INFO] [rclcpp]: Sum: 5
-Return to the terminal where your service node is running. You will see that it published log messages when it received the request and the data it received, and the response it sent back:
+
+Return to the terminal where your service node is running. 
+You will see that it published log messages when it received the request and the data it received, and the response it sent back:
+
 [INFO] [rclcpp]: Incoming request
 a: 2 b: 3
 [INFO] [rclcpp]: sending back response: [5]
+
+
 Enter Ctrl+C in the server terminal to stop the node from spinning.
