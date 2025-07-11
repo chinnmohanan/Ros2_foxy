@@ -1,0 +1,31 @@
+ROS 2 Foxy Workspace Setup on Ubuntu 20.04
+
+This guide walks you through creating and building a ROS 2 workspace using `colcon` in "Ubuntu 20.04" with "ROS 2 Foxy" installed.
+
+---
+
+Objective
+
+To create a functional ROS 2 workspace (`ros2_ws`) for developing and running ROS 2 packages.
+
+---
+
+Prerequisites
+
+- Ubuntu 20.04 LTS
+- ROS 2 Foxy installed (Verify using `ros2 --version`)
+- Basic terminal knowledge
+
+---
+
+Step-by-Step Instructions
+
+Step 1: Source ROS 2 Foxy
+
+Before running ROS 2 commands, source the ROS 2 environment:
+
+source /opt/ros/foxy/setup.bash
+
+Step 2: Create the Workspace
+
+Create the ROS 2 workspace and its src folder:
