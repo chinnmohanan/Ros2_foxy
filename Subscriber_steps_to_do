@@ -9,3 +9,51 @@ publisher_member_function.cpp  subscriber_member_function.cpp
 
 Open the subscriber_member_function.cpp with your text editor.
 Paste the contents of subscriber_member_function.cpp in the repository.
+
+===================================================================================================
+
+
+Since this node has the same dependencies as the publisher node, there’s nothing new to add to package.xml.
+
+CMakeLists.txt
+
+Reopen CMakeLists.txt and add the executable and target for the subscriber node below the publisher’s entries.
+
+add_executable(listener src/subscriber_member_function.cpp)
+ament_target_dependencies(listener rclcpp std_msgs)
+
+install(TARGETS
+  talker
+  listener
+  DESTINATION lib/${PROJECT_NAME})
+
+Make sure to save the file, and then your pub/sub system should be ready.
+Build and run
+
+Still in the root of your workspace, ros2_ws, build your new package:
+colcon build --packages-select cpp_pubsub
+
+
+
+Open a new terminal, navigate to ros2_ws, and source the setup files:
+
+Result
+Now run the talker node:
+ros2 run cpp_pubsub talker
+The terminal should start publishing info messages every 0.5 seconds, like so:
+[INFO] [minimal_publisher]: Publishing: "Hello World: 0"
+[INFO] [minimal_publisher]: Publishing: "Hello World: 1"
+[INFO] [minimal_publisher]: Publishing: "Hello World: 2"
+[INFO] [minimal_publisher]: Publishing: "Hello World: 3"
+[INFO] [minimal_publisher]: Publishing: "Hello World: 4"
+
+Open another terminal, source the setup files from inside ros2_ws again, and then start the listener node:
+ros2 run cpp_pubsub listener
+The listener will start printing messages to the console, starting at whatever message count the publisher is on at that time, like so:
+[INFO] [minimal_subscriber]: I heard: "Hello World: 10"
+[INFO] [minimal_subscriber]: I heard: "Hello World: 11"
+[INFO] [minimal_subscriber]: I heard: "Hello World: 12"
+[INFO] [minimal_subscriber]: I heard: "Hello World: 13"
+[INFO] [minimal_subscriber]: I heard: "Hello World: 14"
+
+Enter Ctrl+C in each terminal to stop the nodes from spinning.
