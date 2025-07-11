@@ -1,110 +1,60 @@
 Creating a Simple Service and Client
-Create a package
+Create a package
 Open a new terminal and source your ROS 2 installation so that ros2 commands will work.
 Navigate into the ros2_ws directory created.
 Recall that packages should be created in the src directory, not the root of the workspace. Navigate into ros2_ws/src and create a new package:
+
 ros2 pkg create --build-type ament_cmake cpp_srvcli --dependencies rclcpp example_interfaces
+
 Your terminal will return a message verifying the creation of your package cpp_srvcli and all its necessary files and folders.
-The --dependencies argument will automatically add the necessary dependency lines to package.xml and CMakeLists.txt. example_interfaces is the package that includes the .srv file you will need to structure your requests and responses:
+
+The --dependencies argument will automatically add the necessary dependency lines to package.xml and CMakeLists.txt. 
+example_interfaces is the package that includes the .srv file you will need to structure your requests and responses:
+
 int64 a
 int64 b
 ---
 int64 sum
+
 The first two lines are the parameters of the request, and below the dashes is the response.
+
 Update package.xml
+
 Because you used the --dependencies option during package creation, you don’t have to manually add dependencies to package.xml or CMakeLists.txt.
 As always, though, make sure to add the description, maintainer email and name, and license information to package.xml.
+
 <description>C++ client server tutorial</description>
 <maintainer email="you@email.com">Your Name</maintainer>
 <license>Apache License 2.0</license>
+
 Write the service node
-Inside the ros2_ws/src/cpp_srvcli/src directory, create a new file called add_two_ints_server.cpp and paste the following code within:
-#include "rclcpp/rclcpp.hpp"
-#include "example_interfaces/srv/add_two_ints.hpp"
+Inside the ros2_ws/src/cpp_srvcli/src directory, create a new file called add_two_ints_server.cpp and paste the code from file "add_two_ints_server.cpp" available in repository.
 
-#include <memory>
 
-void add(const std::shared_ptr<example_interfaces::srv::AddTwoInts::Request> request,
-          std::shared_ptr<example_interfaces::srv::AddTwoInts::Response>      response)
-{
-  response->sum = request->a + request->b;
-  RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Incoming request\na: %ld" " b: %ld",
-                request->a, request->b);
-  RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "sending back response: [%ld]", (long int)response->sum);
-}
 
-int main(int argc, char **argv)
-{
-  rclcpp::init(argc, argv);
-
-  std::shared_ptr<rclcpp::Node> node = rclcpp::Node::make_shared("add_two_ints_server");
-
-  rclcpp::Service<example_interfaces::srv::AddTwoInts>::SharedPtr service =
-    node->create_service<example_interfaces::srv::AddTwoInts>("add_two_ints", &add);
-
-  RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Ready to add two ints.");
-
-  rclcpp::spin(node);
-  rclcpp::shutdown();
-}
 Add executable
 The add_executable macro generates an executable you can run using ros2 run. Add the following code block to CMakeLists.txt to create an executable named server:
+
 add_executable(server src/add_two_ints_server.cpp)
 ament_target_dependencies(server rclcpp example_interfaces)
+
 So ros2 run can find the executable, add the following lines to the end of the file, right before ament_package():
+
 install(TARGETS
     server
   DESTINATION lib/${PROJECT_NAME})
+
 You could build your package now, source the local setup files, and run it, but let’s create the client node first so you can see the full system at work.
-Write the client node
-Inside the ros2_ws/src/cpp_srvcli/src directory, create a new file called add_two_ints_client.cpp and paste the following code within:
-#include "rclcpp/rclcpp.hpp"
-#include "example_interfaces/srv/add_two_ints.hpp"
 
-#include <chrono>
-#include <cstdlib>
-#include <memory>
 
-using namespace std::chrono_literals;
+Write the client node
 
-int main(int argc, char **argv)
-{
-  rclcpp::init(argc, argv);
+Inside the ros2_ws/src/cpp_srvcli/src directory, create a new file called add_two_ints_client.cpp and paste the code from the file "add_two_ints_client.cpp", available in the repository.
 
-  if (argc != 3) {
-      RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "usage: add_two_ints_client X Y");
-      return 1;
-  }
 
-  std::shared_ptr<rclcpp::Node> node = rclcpp::Node::make_shared("add_two_ints_client");
-  rclcpp::Client<example_interfaces::srv::AddTwoInts>::SharedPtr client =
-    node->create_client<example_interfaces::srv::AddTwoInts>("add_two_ints");
 
-  auto request = std::make_shared<example_interfaces::srv::AddTwoInts::Request>();
-  request->a = atoll(argv[1]);
-  request->b = atoll(argv[2]);
 
-  while (!client->wait_for_service(1s)) {
-    if (!rclcpp::ok()) {
-      RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Interrupted while waiting for the service. Exiting.");
-      return 0;
-    }
-    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "service not available, waiting again...");
-  }
 
-  auto result = client->async_send_request(request);
-  // Wait for the result.
-  if (rclcpp::spin_until_future_complete(node, result) ==
-    rclcpp::FutureReturnCode::SUCCESS)
-  {
-    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Sum: %ld", result.get()->sum);
-  } else {
-    RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Failed to call service add_two_ints");
-  }
-
-  rclcpp::shutdown();
-  return 0;
-}
 Add executable
 Return to CMakeLists.txt to add the executable and target for the new node. After removing some unnecessary boilerplate from the automatically generated file, your CMakeLists.txt should look like this:
 cmake_minimum_required(VERSION 3.5)
